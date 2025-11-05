@@ -58,6 +58,13 @@ public struct Habit: Codable, Identifiable, Sendable {
         updatedAt = Date()
     }
     
+    /// Adds a historic completion entry with a specific date
+    public mutating func recordHistoricCompletion(date: Date, notes: String? = nil) {
+        let entry = HabitAuditEntry(timestamp: date, notes: notes)
+        audit.append(entry)
+        updatedAt = Date()
+    }
+    
     /// Returns the most recent completion, if any
     public var mostRecentCompletion: HabitAuditEntry? {
         audit.max(by: { $0.timestamp < $1.timestamp })

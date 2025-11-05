@@ -5,11 +5,30 @@ import Observation
 @Observable
 @MainActor
 public final class HabitStore {
-    /// All habits
-    public var habits: [Habit] = []
+    private let persistence = HabitPersistence()
+    private var isInitializing = false
     
-    public init(habits: [Habit] = []) {
-        self.habits = habits
+    /// All habits
+    public var habits: [Habit] = [] {
+        didSet {
+            if !isInitializing {
+                saveHabits()
+            }
+        }
+    }
+    
+    public init(habits: [Habit]? = nil) {
+        isInitializing = true
+        if let habits = habits {
+            self.habits = habits
+        } else {
+            self.habits = persistence.loadHabits()
+        }
+        isInitializing = false
+    }
+    
+    private func saveHabits() {
+        persistence.saveHabits(habits)
     }
     
     /// Returns only active habits (currently effective)
@@ -47,6 +66,16 @@ public final class HabitStore {
         }
         var habit = habits[index]
         habit.recordCompletion(notes: notes)
+        habits[index] = habit
+    }
+    
+    /// Records a historic completion for a habit with a specific date
+    public func recordHistoricCompletion(for habitId: UUID, date: Date, notes: String? = nil) {
+        guard let index = habits.firstIndex(where: { $0.id == habitId }) else {
+            return
+        }
+        var habit = habits[index]
+        habit.recordHistoricCompletion(date: date, notes: notes)
         habits[index] = habit
     }
     

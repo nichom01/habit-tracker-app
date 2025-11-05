@@ -7,6 +7,7 @@ public struct HabitDetailView: View {
     
     @State private var showingEditHabit = false
     @State private var showingArchiveConfirmation = false
+    @State private var showingHistoricCompletion = false
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -40,23 +41,21 @@ public struct HabitDetailView: View {
     
     public var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .center, spacing: 24) {
                 // Header Section
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(currentHabit.name)
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                            
-                            if !currentHabit.description.isEmpty {
-                                Text(currentHabit.description)
-                                    .font(.body)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
+                VStack(alignment: .center, spacing: 12) {
+                    VStack(alignment: .center, spacing: 8) {
+                        Text(currentHabit.name)
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.center)
                         
-                        Spacer()
+                        if !currentHabit.description.isEmpty {
+                            Text(currentHabit.description)
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
                         
                         if !currentHabit.isCurrentlyEffective {
                             Label("Inactive", systemImage: "pause.circle.fill")
@@ -71,7 +70,7 @@ public struct HabitDetailView: View {
                     
                     // Stats
                     HStack(spacing: 20) {
-                        VStack(alignment: .leading) {
+                        VStack(alignment: .center) {
                             Text("Total Completions")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -80,7 +79,7 @@ public struct HabitDetailView: View {
                                 .fontWeight(.semibold)
                         }
                         
-                        VStack(alignment: .leading) {
+                        VStack(alignment: .center) {
                             Text("Frequency")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -90,7 +89,7 @@ public struct HabitDetailView: View {
                         }
                         
                         if let mostRecent = currentHabit.mostRecentCompletion {
-                            VStack(alignment: .leading) {
+                            VStack(alignment: .center) {
                                 Text("Last Done")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
@@ -100,8 +99,10 @@ public struct HabitDetailView: View {
                             }
                         }
                     }
+                    .frame(maxWidth: .infinity)
                 }
                 .padding()
+                .frame(maxWidth: .infinity)
                 
                 // Primary Action: Mark as Done for Today
                 VStack(spacing: 16) {
@@ -133,6 +134,7 @@ public struct HabitDetailView: View {
                     }
                 }
                 .padding(.horizontal)
+                .frame(maxWidth: .infinity)
                 
                 // Contributions Graph
                 if !currentHabit.audit.isEmpty {
@@ -147,11 +149,11 @@ public struct HabitDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             // Secondary Actions at Bottom
-            HStack(spacing: 12) {
+            VStack(spacing: 12) {
                 Button {
-                    showingEditHabit = true
+                    showingHistoricCompletion = true
                 } label: {
-                    Label("Update", systemImage: "pencil")
+                    Label("Add Historic Completion", systemImage: "plus.circle.fill")
                         .font(.subheadline)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -160,16 +162,30 @@ public struct HabitDetailView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 
-                Button(role: .destructive) {
-                    showingArchiveConfirmation = true
-                } label: {
-                    Label("Archive", systemImage: "archivebox")
-                        .font(.subheadline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.secondary.opacity(0.2))
-                        .foregroundStyle(.red)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                HStack(spacing: 12) {
+                    Button {
+                        showingEditHabit = true
+                    } label: {
+                        Label("Update", systemImage: "pencil")
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.secondary.opacity(0.2))
+                            .foregroundStyle(.primary)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    
+                    Button(role: .destructive) {
+                        showingArchiveConfirmation = true
+                    } label: {
+                        Label("Archive", systemImage: "archivebox")
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.secondary.opacity(0.2))
+                            .foregroundStyle(.red)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
                 }
             }
             .padding()
@@ -179,6 +195,9 @@ public struct HabitDetailView: View {
             EditHabitView(habit: habitBinding) {
                 habitStore.update(habitBinding.wrappedValue)
             }
+        }
+        .sheet(isPresented: $showingHistoricCompletion) {
+            HistoricCompletionView(habitStore: habitStore, preSelectedHabitId: currentHabit.id)
         }
         .confirmationDialog("Archive Habit", isPresented: $showingArchiveConfirmation, titleVisibility: .visible) {
             Button("Archive", role: .destructive) {

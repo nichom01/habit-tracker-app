@@ -130,8 +130,10 @@ public struct ContributionsGraphView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Header
             HStack {
+                Spacer()
                 Text("\(totalContributions) completions in the last 3 months")
                     .font(.headline)
+                    .multilineTextAlignment(.center)
                 Spacer()
             }
             .padding(.horizontal)
@@ -219,19 +221,22 @@ public struct ContributionsGraphView: View {
             }
             
             // Selected date label
-            if let selectedDate = selectedDate, completionsForDate(selectedDate) > 0 {
-                Text(formatSelectedDate(selectedDate))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal)
-                    .padding(.top, 4)
-            } else {
-                Text("")
-                    .font(.caption)
-                    .frame(height: 20)
-                    .padding(.horizontal)
-                    .padding(.top, 4)
+            HStack {
+                Spacer()
+                if let selectedDate = selectedDate, completionsForDate(selectedDate) > 0 {
+                    Text(formatSelectedDate(selectedDate))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                } else {
+                    Text("")
+                        .font(.caption)
+                        .frame(height: 20)
+                }
+                Spacer()
             }
+            .padding(.horizontal)
+            .padding(.top, 4)
         }
         .padding(.vertical)
     }
