@@ -89,11 +89,83 @@ public struct Habit: Codable, Identifiable, Sendable {
     public var isCurrentlyEffective: Bool {
         isEffective(on: Date())
     }
+    
+    /// Checks if the habit was completed today
+    public var isDoneToday: Bool {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        
+        return audit.contains { entry in
+            calendar.startOfDay(for: entry.timestamp) == today
+        }
+    }
+    
+    /// Calculates the current streak (consecutive days with completions)
+    public var currentStreak: Int {
+        let calendar = Calendar.current
+        var streak = 0
+        var currentDate = calendar.startOfDay(for: Date())
+        
+        // Check if done today, if not streak is 0
+        let today = currentDate
+        let hasToday = audit.contains { entry in
+            calendar.startOfDay(for: entry.timestamp) == today
+        }
+        
+        if !hasToday {
+            return 0
+        }
+        
+        streak = 1 // Today counts
+        
+        // Go back day by day
+        while true {
+            guard let previousDate = calendar.date(byAdding: .day, value: -1, to: currentDate) else {
+                break
+            }
+            
+            let hasCompletion = audit.contains { entry in
+                calendar.startOfDay(for: entry.timestamp) == previousDate
+            }
+            
+            if hasCompletion {
+                streak += 1
+                currentDate = previousDate
+            } else {
+                break
+            }
+        }
+        
+        return streak
+    }
+    
+    /// Returns the number of days since the last completion, or nil if never completed
+    public var daysSinceLastCompletion: Int? {
+        guard let mostRecent = mostRecentCompletion else {
+            return nil
+        }
+        
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let lastCompletion = calendar.startOfDay(for: mostRecent.timestamp)
+        
+        guard let days = calendar.dateComponents([.day], from: lastCompletion, to: today).day else {
+            return nil
+        }
+        
+        return days
+    }
 }
 
 extension Habit: Equatable {
     public static func == (lhs: Habit, rhs: Habit) -> Bool {
         lhs.id == rhs.id
+    }
+}
+
+extension Habit: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
 public struct HabitView: View {
-    @State private var habitStore = HabitStore()
+    @Environment(HabitStore.self) private var habitStore
     @State private var showingNewHabit = false
     @State private var showInactive = false
     
@@ -29,7 +29,9 @@ public struct HabitView: View {
                         if !habitStore.activeHabits.isEmpty {
                             Section("Active Habits") {
                                 ForEach(habitStore.activeHabits) { habit in
-                                    HabitRowView(habit: habit)
+                                    NavigationLink(value: habit) {
+                                        HabitRowView(habitStore: habitStore, habitId: habit.id)
+                                    }
                                 }
                             }
                         }
@@ -37,10 +39,20 @@ public struct HabitView: View {
                         if showInactive && !habitStore.inactiveHabits.isEmpty {
                             Section("Inactive Habits") {
                                 ForEach(habitStore.inactiveHabits) { habit in
-                                    HabitRowView(habit: habit)
+                                    NavigationLink(value: habit) {
+                                        HabitRowView(habitStore: habitStore, habitId: habit.id)
+                                    }
                                 }
                             }
                         }
+                    }
+                    .navigationDestination(for: Habit.self) { habit in
+                        HabitDetailView(habitStore: habitStore, habit: habit)
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        Toggle("Show Inactive Habits", isOn: $showInactive)
+                            .padding()
+                            .background(.regularMaterial)
                     }
                 }
             }
@@ -52,11 +64,6 @@ public struct HabitView: View {
                     } label: {
                         Label("New Habit", systemImage: "plus")
                     }
-                }
-                
-                ToolbarItem(placement: .automatic) {
-                    Toggle("Show Inactive", isOn: $showInactive)
-                        .labelsHidden()
                 }
             }
             .sheet(isPresented: $showingNewHabit) {

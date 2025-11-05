@@ -45,7 +45,31 @@ public final class HabitStore {
         guard let index = habits.firstIndex(where: { $0.id == habitId }) else {
             return
         }
-        habits[index].recordCompletion(notes: notes)
+        var habit = habits[index]
+        habit.recordCompletion(notes: notes)
+        habits[index] = habit
+    }
+    
+    /// Archives a habit by setting its effectiveTo date to today
+    public func archive(habitId: UUID) {
+        guard let index = habits.firstIndex(where: { $0.id == habitId }) else {
+            return
+        }
+        var habit = habits[index]
+        habit.effectiveTo = Date()
+        habit.updatedAt = Date()
+        habits[index] = habit
+    }
+    
+    /// Unarchives a habit by clearing its effectiveTo date
+    public func unarchive(habitId: UUID) {
+        guard let index = habits.firstIndex(where: { $0.id == habitId }) else {
+            return
+        }
+        var habit = habits[index]
+        habit.effectiveTo = nil
+        habit.updatedAt = Date()
+        habits[index] = habit
     }
 }
 
