@@ -2,6 +2,20 @@
 
 A modern iOS application using a **workspace + SPM package** architecture for clean separation between app shell and feature code.
 
+## Screenshots
+
+### Splash Screen
+![Splash Screen](screenshots/00-splash-screen.png)
+
+### Home Dashboard
+![Home Dashboard](screenshots/01-home-dashboard.png)
+
+### Habit List
+![Habit List](screenshots/02-habit-list.png)
+
+### Habit Detail
+![Habit Detail](screenshots/03-habit-detail.png)
+
 ## AI Assistant Rules Files
 
 This template includes **opinionated rules files** for popular AI coding assistants. These files establish coding standards, architectural patterns, and best practices for modern iOS development using the latest APIs and Swift features.
