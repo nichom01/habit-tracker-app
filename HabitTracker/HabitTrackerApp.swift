@@ -5,7 +5,7 @@ import HabitTrackerFeature
 struct HabitTrackerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }
