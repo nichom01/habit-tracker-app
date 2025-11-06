@@ -4,17 +4,30 @@ A modern iOS application using a **workspace + SPM package** architecture for cl
 
 ## Screenshots
 
-### Splash Screen
-![Splash Screen](screenshots/00-splash-screen.png)
-
-### Home Dashboard
-![Home Dashboard](screenshots/01-home-dashboard.png)
-
-### Habit List
-![Habit List](screenshots/02-habit-list.png)
-
-### Habit Detail
-![Habit Detail](screenshots/03-habit-detail.png)
+<table>
+  <tr>
+    <td align="center">
+      <img src="screenshots/00-splash-screen.png" width="200" alt="Splash Screen">
+      <br>
+      <strong>Splash Screen</strong>
+    </td>
+    <td align="center">
+      <img src="screenshots/01-home-dashboard.png" width="200" alt="Home Dashboard">
+      <br>
+      <strong>Home Dashboard</strong>
+    </td>
+    <td align="center">
+      <img src="screenshots/02-habit-list.png" width="200" alt="Habit List">
+      <br>
+      <strong>Habit List</strong>
+    </td>
+    <td align="center">
+      <img src="screenshots/03-habit-detail.png" width="200" alt="Habit Detail">
+      <br>
+      <strong>Habit Detail</strong>
+    </td>
+  </tr>
+</table>
 
 ## AI Assistant Rules Files
 
